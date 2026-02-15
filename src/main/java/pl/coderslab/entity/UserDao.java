@@ -4,7 +4,9 @@ import org.mindrot.jbcrypt.BCrypt;
 import pl.coderslab.DbUtil;
 
 import java.sql.*;
+import java.util.Arrays;
 
+@SuppressWarnings("ALL")
 public class UserDao {
     //region Queries
     private static final String CREATE_USER_QUERY =
@@ -14,9 +16,10 @@ public class UserDao {
     private static final String UPDATE_USER_QUERY =
             "UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?;";
     private static final String DELETE_USER_QUERY =
-            "DELETE FROM users WHERE user.id = ?;";
+            "DELETE FROM users WHERE id = ?;";
     //endregion
 
+    //region Methods
     public String hashPassword(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
@@ -83,4 +86,42 @@ public class UserDao {
             e.printStackTrace();
         }
     }
+
+    public void delete(int userId) {
+        try (Connection connection = DbUtil.connect()) {
+            PreparedStatement statement = connection.prepareStatement(DELETE_USER_QUERY);
+            statement.setInt(1, userId);
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void findAll() {
+        try (Connection connection = DbUtil.connect()) {
+            int rowCount = DbUtil.getRowCount(connection);
+
+            PreparedStatement rowStatement = connection.prepareStatement("SELECT id FROM users;");
+            ResultSet rowsIDs = rowStatement.executeQuery();
+
+            User[] users = new User[rowCount];
+            rowsIDs.next();
+
+            for (int i = 0; i < rowCount; i++) {
+                users[i] = read(rowsIDs.getInt(1));
+                rowsIDs.next();
+            }
+
+            for (int i = 0; i < rowCount; i++) {
+                System.out.println(users[i]);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    //endregion
+
+
 }

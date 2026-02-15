@@ -5,7 +5,8 @@ public class Main {
         TaskManager taskManager = new TaskManager();
 //        taskManager.testCreate();
 //        taskManager.testRead();
-        taskManager.testUpdate();
-
+//        taskManager.testUpdate();
+//        taskManager.testDelete();
+        taskManager.testFindAll();
     }
 }

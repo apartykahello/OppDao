@@ -2,6 +2,7 @@ package pl.coderslab;
 
 import java.sql.*;
 
+@SuppressWarnings("ALL")
 public class DbUtil {
 
     //region Connecting with the database
@@ -41,7 +42,7 @@ public class DbUtil {
 
     //region Operations on database
     private static final String DELETE_QUERY = "DELETE FROM tableName where id = ?";
-    private static final String EXIST_QUERY = "SELECT * FROM tableName m WHERE m.id = ?;";
+    private static final String EXIST_QUERY = "SELECT * FROM workshop2 m WHERE m.id = ?;";
 
     public static void remove(Connection conn, String tableName, int id) {
         try (PreparedStatement statement =
@@ -53,8 +54,8 @@ public class DbUtil {
         }
     }
 
-    public static boolean rowExists(Connection conn, String tableName, int id) throws SQLException {
-        try (PreparedStatement statement = conn.prepareStatement(EXIST_QUERY.replace("tableName", tableName));) {
+    public static boolean rowExists(Connection conn, int id) throws SQLException {
+        try (PreparedStatement statement = conn.prepareStatement(EXIST_QUERY)) {
             statement.setInt(1, id);
             if (!statement.executeQuery().next()) return false;
             return true;
@@ -62,5 +63,19 @@ public class DbUtil {
             throw new RuntimeException(e);
         }
     }
+
+    public static int getRowCount(Connection conn) {
+        try (PreparedStatement statement = conn.prepareStatement("SELECT COUNT(*) FROM users;")) {
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
     //endregion
+
 }
