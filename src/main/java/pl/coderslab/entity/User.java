@@ -41,4 +41,14 @@ public class User {
         this.password = password;
     }
     //endregion
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", userName='" + userName + '\'' +
+                ", email='" + email + '\'' +
+                ", password=" + password +
+                '}';
+    }
 }
